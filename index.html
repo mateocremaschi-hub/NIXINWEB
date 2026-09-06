@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>niXin — Aerial thermographic inspection for solar farms</title>
+<meta name="description" content="Aerial thermographic inspection of utility-scale solar farms in Australia, delivered as a module-by-module report.">
+<link rel="canonical" href="https://nixin.com.au/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="niXin">
+<meta property="og:title" content="niXin — Aerial thermographic inspection for solar farms">
+<meta property="og:description" content="Find the power your site is losing. Module-by-module thermal reports for utility-scale solar, Australia-wide.">
+<meta property="og:url" content="https://nixin.com.au/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#05070A">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=&#39;http://www.w3.org/2000/svg&#39; viewBox=&#39;0 0 100 100&#39;%3E%3Crect width=&#39;100&#39; height=&#39;100&#39; rx=&#39;22&#39; fill=&#39;%2305070A&#39;/%3E%3Cpath d=&#39;M28 28L72 72M72 28L28 72&#39; stroke=&#39;%23DCEEF0&#39; stroke-width=&#39;12&#39; stroke-linecap=&#39;round&#39;/%3E%3Ccircle cx=&#39;28&#39; cy=&#39;28&#39; r=&#39;9&#39; fill=&#39;%235AD1DB&#39;/%3E%3Ccircle cx=&#39;72&#39; cy=&#39;28&#39; r=&#39;9&#39; fill=&#39;%235AD1DB&#39;/%3E%3Ccircle cx=&#39;28&#39; cy=&#39;72&#39; r=&#39;9&#39; fill=&#39;%235AD1DB&#39;/%3E%3Ccircle cx=&#39;72&#39; cy=&#39;72&#39; r=&#39;9&#39; fill=&#39;%235AD1DB&#39;/%3E%3C/svg%3E">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</head>
+<body>
+<style>
+  :root {
+    --ground: #05070A;
+    --panel: #0C1418;
+    --panel-2: #0F1B20;
+    --line: #1C3A40;
+    --line-soft: #132A2F;
+    --accent: #5AD1DB;
+    --accent-dim: #2E7E86;
+    --ice: #DCEEF0;
+    --muted: #6B8189;
+    --hot: #E8834A;
+    --hot-2: #C4562F;
+    --display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    --body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ice);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.03em; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.02; }
+  h2 { font-size: clamp(26px, 3.4vw, 38px); line-height: 1.1; }
+  h3 { font-size: 19px; letter-spacing: -0.015em; }
+  p { margin: 0; }
+  .lede { font-size: clamp(16px, 1.7vw, 19px); color: #A9C2C7; max-width: 60ch; }
+  .small { font-size: 14px; color: var(--muted); }
+
+  /* framing device — the brand's bracket motif */
+  .framed { position: relative; }
+  .framed::before, .framed::after {
+    content: "";
+    position: absolute;
+    width: 46px; height: 46px;
+    border: 2px solid var(--accent);
+    pointer-events: none;
+  }
+  .framed::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+  .framed::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+  header.site {
+    border-bottom: 1px solid var(--line-soft);
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(5, 7, 10, 0.86);
+    backdrop-filter: blur(8px);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 13px; font-family: var(--display); font-weight: 700; font-size: 25px; letter-spacing: -0.035em; color: var(--ice); line-height: 1; }
+  .brand svg { display: block; }
+  .brand .word { display: flex; align-items: center; gap: 2px; }
+  .nav { display: flex; align-items: center; gap: 26px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .nav a { color: var(--muted); text-decoration: none; }
+  .nav a:hover, .nav a:focus-visible { color: var(--accent); }
+
+  a.btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+    padding: 13px 22px; border: 1px solid var(--hot); color: #16090A;
+    background: var(--hot);
+  }
+  a.btn:hover, a.btn:focus-visible { background: #F39A66; border-color: #F39A66; }
+  a.btn.ghost { background: transparent; color: var(--accent); }
+  a.btn.ghost:hover, a.btn.ghost:focus-visible { background: rgba(90, 209, 219, 0.12); color: var(--accent); }
+  a:focus-visible, .nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* hero */
+  .hero { padding: 76px 0 88px; border-bottom: 1px solid var(--line-soft); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .hero-copy { display: flex; flex-direction: column; gap: 26px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  /* thermal readout */
+  .readout { border: 1px solid var(--line); background: var(--panel); padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+  .readout-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .array { display: grid; grid-template-columns: repeat(14, 1fr); gap: 3px; position: relative; overflow: hidden; }
+  .array::after {
+    content: ""; position: absolute; left: 0; right: 0; top: -32%; height: 28%;
+    background: linear-gradient(180deg, rgba(90,209,219,0) 0%, rgba(90,209,219,0.07) 55%, rgba(90,209,219,0.30) 94%, rgba(90,209,219,0) 100%);
+    border-bottom: 1px solid rgba(90,209,219,0.5);
+    pointer-events: none;
+    animation: scan 5.2s cubic-bezier(0.4, 0, 0.5, 1) infinite;
+  }
+  @keyframes scan {
+    0%   { top: -32%; opacity: 0; }
+    10%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .mod { aspect-ratio: 1 / 1.85; background: #16323A; border-radius: 1px; }
+  .mod.w { background: #2C6068; }
+  .mod.h { background: var(--hot-2); animation: ember 3.4s ease-in-out infinite 0.5s; }
+  .mod.x { background: var(--hot); box-shadow: 0 0 10px rgba(232, 131, 74, 0.55); animation: ember 3.4s ease-in-out infinite; }
+  @keyframes ember {
+    0%, 100% { box-shadow: 0 0 6px rgba(232, 131, 74, 0.35); }
+    50%      { box-shadow: 0 0 16px rgba(232, 131, 74, 0.8); }
+  }
+  .ramp { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--muted); }
+  .ramp-bar { flex: 1; height: 5px; background: linear-gradient(90deg, #16323A, #2C6068, #C4562F, #E8834A); }
+  .hit { border-top: 1px solid var(--line-soft); padding-top: 14px; display: grid; grid-template-columns: 1fr auto; gap: 6px 18px; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .hit dt { color: var(--muted); margin: 0; }
+  .hit dd { margin: 0; color: var(--ice); text-align: right; }
+  .hit dd.flag { color: var(--hot); }
+
+  .chip { display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--hot); border: 1px solid rgba(232, 131, 74, 0.45); background: rgba(232, 131, 74, 0.1);
+    padding: 5px 10px; }
+  .chip .dot { width: 6px; height: 6px; background: var(--hot); border-radius: 50%; animation: blip 3.4s ease-in-out infinite; }
+  @keyframes blip { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+
+  /* niXin Software sub-brand mark */
+  .swmark { display: flex; align-items: center; gap: 14px; margin-bottom: 2px; }
+  .swmark .tile { width: 54px; height: 54px; flex: none; display: block; }
+  .swmark-text { display: flex; flex-direction: column; gap: 5px; line-height: 1; }
+  .swmark-name { display: flex; align-items: center; gap: 1.5px; font-family: var(--display); font-weight: 700; font-size: 24px; letter-spacing: -0.035em; color: var(--ice); }
+  .swmark-sub { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+
+  /* own-software band */
+  .software { border-bottom: 1px solid var(--line-soft); padding: 62px 0; background: #080F12; }
+  .sw-inner { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 54px; align-items: start; }
+  .sw-copy { display: flex; flex-direction: column; gap: 16px; }
+  .sw-copy h2 { font-size: clamp(24px, 2.8vw, 32px); }
+  .sw-copy p { font-size: 16px; color: #9DB6BB; max-width: 52ch; }
+  .sw-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0;
+    border: 1px solid var(--line); background: var(--panel); }
+  .sw-list li { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-bottom: 1px solid var(--line-soft); }
+  .sw-list li:last-child { border-bottom: 0; }
+  .sw-list .k { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hot); flex: none; width: 34px; padding-top: 3px; }
+  .sw-list .v { font-size: 14.5px; color: #9DB6BB; }
+
+  /* sections */
+  section { padding: 84px 0; border-bottom: 1px solid var(--line-soft); }
+  .sec-head { display: flex; flex-direction: column; gap: 14px; max-width: 62ch; margin-bottom: 44px; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .card { border: 1px solid var(--line); background: var(--panel); padding: 28px 26px; display: flex; flex-direction: column; gap: 12px; }
+  .card .num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--accent-dim); }
+  .card p { font-size: 15px; color: #9DB6BB; }
+
+  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); }
+  .step { padding: 28px 24px; display: flex; flex-direction: column; gap: 11px; border-right: 1px solid var(--line); background: var(--panel); }
+  .step:last-child { border-right: 0; }
+  .step .n { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; color: var(--accent); }
+  .step h3 { font-size: 17px; }
+  .step p { font-size: 14px; color: #9DB6BB; }
+
+  .specs { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .specs th, .specs td { text-align: left; padding: 15px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  .specs th { color: var(--muted); font-weight: 400; letter-spacing: 0.06em; width: 42%; }
+  .specs td { color: var(--ice); }
+  .specs tr:last-child th, .specs tr:last-child td { border-bottom: 0; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
+
+  .scope { border: 1px solid var(--line); background: var(--panel); padding: 34px 32px; }
+  .scope ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 40px; font-size: 15px; color: #9DB6BB; }
+  .scope li { display: flex; gap: 13px; align-items: flex-start; }
+  .tick { flex: none; margin-top: 6px; width: 9px; height: 9px; border: 2px solid var(--hot); }
+
+  /* enquiry form */
+  .form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 22px; width: 100%; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .field label .opt { color: #3F5158; }
+  .field input, .field select, .field textarea {
+    font-family: var(--body); font-size: 15px; color: var(--ice);
+    background: #081114; border: 1px solid var(--line); padding: 12px 14px; width: 100%;
+    border-radius: 0; appearance: none;
+  }
+  .field textarea { resize: vertical; min-height: 96px; font-family: var(--body); }
+  .field select { background-image: linear-gradient(45deg, transparent 50%, #5AD1DB 50%), linear-gradient(135deg, #5AD1DB 50%, transparent 50%);
+    background-position: calc(100% - 19px) 21px, calc(100% - 13px) 21px; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; padding-right: 38px; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+  .field input::placeholder, .field textarea::placeholder { color: #3F5158; }
+  .radios { display: flex; flex-wrap: wrap; gap: 10px; }
+  .field .radio { display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+    font-family: var(--body); font-size: 14px; font-weight: 400; letter-spacing: 0; text-transform: none;
+    color: var(--ice); background: #081114; border: 1px solid var(--line); padding: 11px 16px; }
+  .field .radio input { appearance: none; margin: 0; flex: none; width: 13px; height: 13px;
+    border: 1px solid #3E6A72; border-radius: 50%; background: transparent; }
+  .field .radio input:checked { border-color: var(--hot); box-shadow: inset 0 0 0 3px var(--hot); }
+  .field .radio:has(input:checked) { border-color: var(--hot); }
+  .field .radio input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.btn { font: inherit; cursor: pointer; }
+  .form-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .form-note { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: #4A5C63; }
+  .sent { grid-column: 1 / -1; border: 1px solid var(--hot); background: rgba(232, 131, 74, 0.08); padding: 18px 20px;
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.75; color: #E3C6B4; }
+  .sent a { color: var(--hot); }
+  .sent.ok { border-color: var(--accent); background: rgba(90, 209, 219, 0.08); color: #BFE6EA; }
+
+  /* contact */
+  .contact { padding: 88px 28px 96px; }
+  .contact-inner { max-width: 1080px; margin: 0 auto; border: 1px solid var(--line); background: var(--panel-2); padding: 58px 54px; display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 54px; align-items: start; }
+  .contact-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+  .contact-inner::before, .contact-inner::after { width: 54px; height: 54px; }
+  .contact dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 26px; font-family: var(--mono); font-size: 13.5px; margin: 0; }
+  .contact dt { color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; padding-top: 3px; }
+  .contact dd { margin: 0; color: var(--ice); }
+  .contact dd a { color: var(--accent); text-decoration: none; }
+  .contact dd a:hover { text-decoration: underline; }
+  .ph { color: var(--muted); }
+
+  footer.site { border-top: 1px solid var(--line-soft); padding: 30px 0 44px; }
+  .foot { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; color: #4A5C63; text-transform: uppercase; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .cards { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .step:nth-child(2) { border-right: 0; }
+    .step:nth-child(1), .step:nth-child(2) { border-bottom: 1px solid var(--line); }
+    .scope ul { grid-template-columns: 1fr; }
+    .shots { grid-template-columns: 1fr; }
+    .nav { display: none; }
+    .sw-inner { grid-template-columns: 1fr; gap: 30px; }
+    .contact-inner { padding: 40px 26px; grid-template-columns: 1fr; gap: 36px; }
+    .form { grid-template-columns: 1fr; }
+    section { padding: 62px 0; }
+  }
+  @media (max-width: 560px) {
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: 0; border-bottom: 1px solid var(--line); }
+    .step:last-child { border-bottom: 0; }
+    .array { grid-template-columns: repeat(10, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<header class="site">
+  <div class="wrap bar">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" fill="none" style="width: 46px; height: 46px;" aria-hidden="true">
+        <path d="M24 24L76 76M76 24L24 76" stroke="#5AD1DB" stroke-width="10" stroke-linecap="round"/>
+        <g stroke="#DCEEF0" stroke-width="5">
+          <circle cx="24" cy="24" r="16"/><circle cx="76" cy="24" r="16"/>
+          <circle cx="24" cy="76" r="16"/><circle cx="76" cy="76" r="16"/>
+        </g>
+        <rect x="37" y="37" width="26" height="26" rx="9" fill="#05070A" stroke="#DCEEF0" stroke-width="5"/>
+        <circle cx="50" cy="50" r="4.5" fill="#5AD1DB"/>
+      </svg>
+      <span class="word"><span>ni</span><svg viewBox="15 15 70 70" fill="none" style="width: 13px; height: 13px;" aria-label="X"><path d="M22 22L78 78M78 22L22 78" stroke="#DCEEF0" stroke-width="14" stroke-linecap="round"/><circle cx="22" cy="22" r="10.5" fill="#5AD1DB"/><circle cx="78" cy="22" r="10.5" fill="#5AD1DB"/><circle cx="22" cy="78" r="10.5" fill="#5AD1DB"/><circle cx="78" cy="78" r="10.5" fill="#5AD1DB"/></svg><span>in</span></span>
+    </div>
+    <nav class="nav">
+      <a href="#deliverables">Report</a>
+      <a href="#process">Process</a>
+      <a href="#specs">Specs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Aerial thermography · Utility-scale solar</p>
+        <h1>Find the power your site is losing.</h1>
+        <p class="lede">Aerial thermographic inspection of utility-scale solar farms, delivered as a module-by-module report.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#contact">Request an inspection</a>
+          <a class="btn ghost" href="#process">See how it works</a>
+        </div>
+      </div>
+
+      <div class="readout framed">
+        <div class="readout-head">
+          <span>Block 04 · Tracker 018</span>
+          <span>ΔT vs string</span>
+        </div>
+        <div class="array" aria-hidden="true">
+          <div class="mod"></div><div class="mod"></div><div class="mod w"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod w"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div>
+          <div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod h"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod w"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div>
+          <div class="mod"></div><div class="mod w"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod x"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod w"></div><div class="mod"></div>
+          <div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod w"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div><div class="mod"></div>
+        </div>
+        <div class="ramp"><span>0.0</span><span class="ramp-bar"></span><span>+6.0 °C</span></div>
+        <span class="chip"><span class="dot"></span>Class 2 · schedule repair</span>
+        <dl class="hit">
+          <dt>Module</dt><dd>04-018-R2 · S-2 · #24</dd>
+          <dt>Fault</dt><dd class="flag">Bypass diode</dd>
+          <dt>ΔT over own module</dt><dd>+4.9 °C</dd>
+          <dt>Irradiance at capture</dt><dd>842 W/m²</dd>
+        </dl>
+        <p class="small" style="font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; color: #46565E;">Example readout</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="software">
+    <div class="wrap sw-inner">
+      <div class="sw-copy">
+        <div class="swmark">
+          <svg class="tile" viewBox="0 0 100 100" fill="none" role="img" aria-label="niXin Software">
+            <rect x="1.5" y="1.5" width="97" height="97" rx="24" fill="#0C1418" stroke="#1C3A40" stroke-width="3"/>
+            <g stroke="#5AD1DB" stroke-width="4" stroke-linecap="square">
+              <path d="M18 34V18h16M82 34V18H66M18 66v16h16M82 66v16H66"/>
+            </g>
+            <path d="M34 34L66 66M66 34L34 66" stroke="#DCEEF0" stroke-width="11" stroke-linecap="round"/>
+            <circle cx="34" cy="34" r="7.5" fill="#5AD1DB"/><circle cx="66" cy="34" r="7.5" fill="#5AD1DB"/>
+            <circle cx="34" cy="66" r="7.5" fill="#5AD1DB"/><circle cx="66" cy="66" r="7.5" fill="#5AD1DB"/>
+          </svg>
+          <span class="swmark-text">
+            <span class="swmark-name"><span>ni</span><svg viewBox="15 15 70 70" fill="none" style="width: 12.5px; height: 12.5px; display: block;" aria-label="X"><path d="M22 22L78 78M78 22L22 78" stroke="#DCEEF0" stroke-width="14" stroke-linecap="round"/><circle cx="22" cy="22" r="10.5" fill="#5AD1DB"/><circle cx="78" cy="22" r="10.5" fill="#5AD1DB"/><circle cx="22" cy="78" r="10.5" fill="#5AD1DB"/><circle cx="78" cy="78" r="10.5" fill="#5AD1DB"/></svg><span>in</span></span>
+            <span class="swmark-sub">Software</span>
+          </span>
+        </div>
+        <h2>Built by people who walk the rows.</h2>
+        <p>With hands-on experience on solar sites, we built the software around the way a site is actually walked. The platform is our own, not a licence we resell, so if your site is documented differently or the report needs something extra, we can adapt it without waiting on anyone else.</p>
+      </div>
+      <ul class="sw-list">
+        <li><span class="k">01</span><span class="v">No third-party platform sitting between your site and your report</span></li>
+        <li><span class="k">02</span><span class="v">The report follows your naming and your layout, not a fixed template</span></li>
+        <li><span class="k">03</span><span class="v">Changes are made by the people who wrote it, on our own timeline</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section id="deliverables">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">What you get</p>
+        <h2>What the report contains.</h2>
+        <p class="lede">Every finding is tied to a single module: what the fault is, how much hotter it runs than the rest of its string, and where that module sits on the site.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <span class="num">01 / REPORT</span>
+          <h3>Module-level addressing</h3>
+          <p>Each finding carries its block, tracker, row, string and module position, counted the same way your crew counts in the field. Delivered as CSV and PDF.</p>
+        </article>
+        <article class="card">
+          <span class="num">02 / CLASSIFICATION</span>
+          <h3>Fault type, not just heat</h3>
+          <p>Cell hotspot, bypass diode, open string, whole-module and tracker-level events are separated by the shape of the thermal signature. A misaligned tracker is reported as one event, not as 50 module defects.</p>
+        </article>
+        <article class="card">
+          <span class="num">03 / EVIDENCE</span>
+          <h3>Conditions on the record</h3>
+          <p>Irradiance, wind, sky and gimbal angle logged per capture and checked against IEC 62446-3. Radiometric frames retained, so any finding can be re-opened later.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Process</p>
+        <h2>We start by listening.</h2>
+        <p class="lede">No two sites are run the same way. We ask how yours works first, and shape the report around it &mdash; your naming, your priorities, the format your team already uses.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="n">STEP 1</span>
+          <h3>Your brief</h3>
+          <p>A call to understand what you need to find, how your team names and records assets, and what the report has to contain to be useful to you.</p>
+        </div>
+        <div class="step">
+          <span class="n">STEP 2</span>
+          <h3>Your site on paper</h3>
+          <p>Send whatever you already have &mdash; plans, spreadsheets, however your team names its blocks and rows. We work with your documents as they are, and tell you up front if anything is missing.</p>
+        </div>
+        <div class="step">
+          <span class="n">STEP 3</span>
+          <h3>Survey and analysis</h3>
+          <p>We fly the whole site during the hours when the sun is strong enough for the readings to count, then compare each panel against the ones it works alongside &mdash; so dirt or a passing cloud never ends up counted as a fault.</p>
+        </div>
+        <div class="step">
+          <span class="n">STEP 4</span>
+          <h3>Your report</h3>
+          <p>Every finding checked against its visible image, then delivered in the format we agreed &mdash; within a week of the last flight.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="specs">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Survey specification</p>
+        <h2>The numbers behind the report.</h2>
+      </div>
+      <div class="table-scroll">
+        <table class="specs">
+          <tbody>
+            <tr><th>Aircraft &amp; sensor</th><td>DJI Matrice 4T · 640 × 512 radiometric thermal + visible</td></tr>
+            <tr><th>Survey altitude</th><td>50 m AGL</td></tr>
+            <tr><th>Ground sampling distance</th><td>≈ 6.6 cm/px — resolves single-cell hotspots</td></tr>
+            <tr><th>Temperature data</th><td>Raw radiometric, 1/64 K resolution — not screen colours</td></tr>
+            <tr><th>Irradiance window</th><td>≥ 600 W/m², per IEC 62446-3</td></tr>
+            <tr><th>Typical throughput</th><td>≈ 380,000 modules in about four field days</td></tr>
+            <tr><th>Reporting turnaround</th><td>Within one week of the last flight</td></tr>
+            <tr><th>Coverage</th><td>Australia-wide</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="scope">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Scope</p>
+        <h2>What every survey includes.</h2>
+      </div>
+      <div class="scope">
+        <ul>
+          <li><span class="tick"></span><span>Full-site radiometric survey with the flight conditions logged per capture</span></li>
+          <li><span class="tick"></span><span>Module-level report with physical addressing — block, tracker, string, module</span></li>
+          <li><span class="tick"></span><span>Fault classification by thermal signature, with severity graded by &Delta;T</span></li>
+          <li><span class="tick"></span><span>Tracker and string-level events grouped as single events, not repeated per module</span></li>
+          <li><span class="tick"></span><span>Report delivered as CSV and PDF, with the radiometric frames retained</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="contact" id="contact">
+    <div class="contact-inner framed">
+      <div class="contact-copy">
+        <p class="eyebrow">Get in touch</p>
+        <h2>Ask for a quotation.</h2>
+        <p class="lede">Send us the site details and we come back with a survey plan and a price. If you do not have the block count or module numbers to hand, leave them blank — we can work them out from your drawings.</p>
+        <dl>
+          <dt>Email</dt><dd><a href="mailto:nixinsolar@gmail.com">nixinsolar@gmail.com</a></dd>
+          <dt>Phone</dt><dd><a href="tel:+61484186892">+61 484 186 892</a></dd>
+          <dt>Coverage</dt><dd>Australia-wide</dd>
+          <dt>ABN</dt><dd class="ph">[ your ABN ]</dd>
+        </dl>
+      </div>
+
+      <form class="form" id="enquiry" name="quote" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="quote">
+        <p hidden><label>Leave this empty: <input name="bot-field"></label></p>
+        <div class="field">
+          <label for="company">Company</label>
+          <input id="company" name="Company" type="text" autocomplete="organization" required>
+        </div>
+        <div class="field">
+          <label for="person">Contact name</label>
+          <input id="person" name="Contact" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="Email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="phone">Mobile</label>
+          <input id="phone" name="Mobile" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field full">
+          <label id="reachlabel">How should we get back to you?</label>
+          <div class="radios" role="radiogroup" aria-labelledby="reachlabel">
+            <label class="radio"><input type="radio" name="Preferred contact" value="Email" checked><span>Email</span></label>
+            <label class="radio"><input type="radio" name="Preferred contact" value="Phone call"><span>Phone call</span></label>
+            <label class="radio"><input type="radio" name="Preferred contact" value="Either is fine"><span>Either is fine</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="site">Site name</label>
+          <input id="site" name="Site" type="text" required>
+        </div>
+        <div class="field">
+          <label for="location">Location</label>
+          <input id="location" name="Location" type="text" placeholder="Town, state" required>
+        </div>
+        <div class="field full">
+          <label for="size">Site size</label>
+          <select id="size" name="Site size" required>
+            <option value="" selected>Select capacity</option>
+            <option>Under 5 MW</option>
+            <option>5 – 20 MW</option>
+            <option>20 – 50 MW</option>
+            <option>50 – 100 MW</option>
+            <option>100 – 250 MW</option>
+            <option>250 – 500 MW</option>
+            <option>Over 500 MW</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="blocks">Number of blocks <span class="opt">· if known</span></label>
+          <input id="blocks" name="Blocks" type="text" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label for="modules">Approx. total modules <span class="opt">· if known</span></label>
+          <input id="modules" name="Modules" type="text" inputmode="numeric">
+        </div>
+        <div class="field full">
+          <label for="notes">Anything else <span class="opt">· optional</span></label>
+          <textarea id="notes" name="Notes" placeholder="Timing, previous surveys, what you already have on file."></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn" type="submit">Send enquiry</button>
+          <span class="form-note">Opens in your email client.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap foot">
+    <span>niXin · Aerial thermography</span>
+    <span>Australia-wide</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var form = document.getElementById('enquiry');
+  if (!form) return;
+  var TO = 'nixinsolar@gmail.com';
+  var SKIP = { 'form-name': 1, 'bot-field': 1 };
+
+  function collect() {
+    var lines = [];
+    Array.prototype.forEach.call(form.elements, function (el) {
+      if (!el.name || SKIP[el.name]) return;
+      if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+      var v = (el.value || '').trim();
+      if (v) lines.push(el.name + ': ' + v);
+    });
+    return lines.join('\n');
+  }
+
+  function panel(html, ok) {
+    var old = form.querySelector('.sent');
+    if (old) old.remove();
+    var box = document.createElement('div');
+    box.className = 'sent';
+    if (ok) box.classList.add('ok');
+    box.innerHTML = html;
+    form.appendChild(box);
+    box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function esc(t) {
+    return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var body = collect();
+    var site = (document.getElementById('site').value || '').trim();
+    var btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending'; }
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function (r) {
+      if (!r.ok) throw new Error('post failed');
+      form.reset();
+      if (btn) { btn.disabled = false; btn.textContent = 'Send enquiry'; }
+      panel('Thanks. We have your details and will come back to you shortly.', true);
+    }).catch(function () {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send enquiry'; }
+      var subject = 'Thermal inspection enquiry' + (site ? ' \u2014 ' + site : '');
+      panel('If your email client did not open, send these details to <a href="mailto:' + TO + '">' + TO + '</a>:<br><br>' + esc(body), false);
+      window.location.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
